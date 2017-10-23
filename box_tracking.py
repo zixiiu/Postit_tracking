@@ -20,7 +20,7 @@ event = "motion_stopped"
 push = False
 #====================
 
-ColorLower = (160, 50, 50)
+ColorLower = (140, 50, 50)
 ColorUpper = (180, 255, 255)
 #HSV color, Hue=0-180, Sat=0-255, Val=0-255
 pts = deque(maxlen=64) #points vari
@@ -33,6 +33,7 @@ logging.info("system start")
 while True:
 	(grabbed, frame) = camera.read()
 	frame = imutils.resize(frame, width=800)
+
 
 	#create mask for color
 	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -48,7 +49,7 @@ while True:
 		rect = cv2.minAreaRect(c)
 		box = cv2.boxPoints(rect)
 		boxn=np.array(box).reshape((-1,1,2)).astype(np.int32)
-		if rect[1][1] > 50: #Height > 50 pixel
+		if rect[1][1] > 10: #Height > 50 pixel
 			cv2.drawContours(frame,[boxn],0,(255,0,0),2)
 			center = (int(rect[0][0]),int(rect[0][1]))
 		
@@ -112,8 +113,8 @@ while True:
 			else:
 				rep = 0
 
-			cv2.putText(frame,'RPM=', (10,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), thickness=3)
-			cv2.putText(frame,RPM, (100,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), thickness=3)
+			cv2.putText(frame,'RPM=', (10,90), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,0), thickness=3)
+			cv2.putText(frame,RPM, (100,90), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,0), thickness=3)
 			cv2.circle(frame,ref_center,10,color=(0,255,255),thickness=3)
 
 			
@@ -126,13 +127,14 @@ while True:
 
 
 	cv2.imshow("Frame", frame)
+	cv2.imshow('Mask', mask)
 	
 	# quit when q
 	if key == ord("q"):
 		break
 
 	#max fps
-	#time.sleep(0.1)
+	time.sleep(0.1)
 
 camera.release()
 cv2.destroyAllWindows()
