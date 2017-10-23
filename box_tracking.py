@@ -10,7 +10,7 @@ import pyfttt
 
 
 #IFTTT ALART SETTINGS
-api_key = "5J7mzWs3FhrLRLUvqr_rm"
+api_key = "YOUR_API_KEY_HERE"
 event = "motion_stopped"
 push = False
 #====================
