@@ -86,6 +86,8 @@ while True:
 					stopped = 1
 			else:
 				cv2.putText(frame,"Moving!!!", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), thickness=3)
+				if stopped == 1:
+					logging.info("movement start")
 				stopped = 0
 
 
@@ -94,6 +96,9 @@ while True:
 		ref_center = center
 		rep = 0
 		ref_time = time.time()
+		logging.info("RPM counter start")
+
+
 	if center is not None:
 		if ref_center:
 			center_check = abs(center[0]-ref_center[0])+abs(center[1]-ref_center[1])
@@ -103,6 +108,7 @@ while True:
 					RPM = str(round(60/elapsed_time,2))
 					ref_time = time.time()
 					rep = 1
+					logging.info("round complete! RPM = %s",RPM)
 			else:
 				rep = 0
 
