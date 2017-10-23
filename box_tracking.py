@@ -7,6 +7,11 @@ import time
 import timeit
 import datetime
 import pyfttt
+import logging
+
+
+logging.basicConfig(filename='log.log',level=logging.DEBUG,format='%(asctime)s %(message)s')
+
 
 
 #IFTTT ALART SETTINGS
@@ -15,12 +20,15 @@ event = "motion_stopped"
 push = False
 #====================
 
-ColorLower = (29, 86, 30)
-ColorUpper = (100, 255, 255)
+ColorLower = (160, 50, 50)
+ColorUpper = (180, 255, 255)
+#HSV color, Hue=0-180, Sat=0-255, Val=0-255
 pts = deque(maxlen=64) #points vari
 camera = cv2.VideoCapture(1)
 stopped = 0 #stop indicator
 ref_center = None
+
+logging.info("system start")
 
 while True:
 	(grabbed, frame) = camera.read()
@@ -55,9 +63,9 @@ while True:
 		else:
 			push = False
 	if push:
-		cv2.putText(frame,"IFTTT ON", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), thickness=3)
+		cv2.putText(frame,"IFTTT ON", (10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), thickness=1)
 	else:
-		cv2.putText(frame,"IFTTT OFF", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), thickness=3)
+		cv2.putText(frame,"IFTTT OFF", (10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,255), thickness=1)
 
 
 
@@ -65,18 +73,19 @@ while True:
 	detect_frame_num = 10
 	if len(pts) >detect_frame_num:
 		if pts[detect_frame_num] is None or pts[0] is None:
-			cv2.putText(frame,"Not Detected!!!", (10,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), thickness=3)
+			cv2.putText(frame,"Not Detected!!!", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), thickness=3)
 		else:
 			motion_check = abs(pts[detect_frame_num][0]-pts[0][0])+abs(pts[detect_frame_num][1]-pts[0][1])
 			if motion_check < 3:
-				cv2.putText(frame,"Not Moving!!!", (10,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), thickness=3)
+				cv2.putText(frame,"Not Moving!!!", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), thickness=3)
 				if stopped == 0:
 					print "stopped at",datetime.datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')
+					logging.info("movement stop")
 					if push:
 						pyfttt.send_event(api_key,event) #IFTTT alart
 					stopped = 1
 			else:
-				cv2.putText(frame,"Moving!!!", (10,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), thickness=3)
+				cv2.putText(frame,"Moving!!!", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), thickness=3)
 				stopped = 0
 
 
